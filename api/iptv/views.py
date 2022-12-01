@@ -17,25 +17,24 @@ class ChannelAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         country_code = self.request.query_params.get('country_code', None)
-        subdivision = self.request.query_params.get('subdivision', None)
+        subdivision = self.request.query_params.get('subdivision', None)  
         city = self.request.query_params.get('city', None)
         broadcast_area = self.request.query_params.get('broadcast_area', None)
         languages = self.request.query_params.get('languages', None)
         categories = self.request.query_params.get('categories', None)
-        is_nsfw = self.request.query_params.get('is_nsfw', False)
-        print("city", city)
-        print("country_code", country_code)
+        is_nsfw = self.request.query_params.get('is_nsfw', "false")
+        is_nsfw = True if is_nsfw == 'true' else False
+        subdivision = None if subdivision == '' else subdivision
+
         return Channel.objects.filter(Q(country__code=country_code) & Q(subdivision__code=subdivision) &
                                       Q(is_nsfw=is_nsfw))
 
-
 class StreamAPIView(generics.ListAPIView):
     serializer_class = StreamSerializer
-    queryset = Stream.objects.all()
-    lookup_url_kwarg = 'channel'
     
     def get_queryset(self):
-        uid = self.kwargs.get(self.lookup_url_kwarg)
+        uid = self.kwargs.get('channel')
+        print('Stream.objects.filter(channel__id=uid)', uid, Stream.objects.filter(channel__id=uid).count())
         return Stream.objects.filter(channel__id=uid)
     
     
