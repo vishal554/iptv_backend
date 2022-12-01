@@ -50,9 +50,10 @@ class Command(BaseCommand):
                 if subdivision: 
                     channel.subdivision = subdivision
                     
-                country = Country.objects.filter(code=country).first()
                 if country:
-                    channel.country = country
+                    country = Country.objects.filter(code=country).first()
+                    if country:
+                        channel.country = country
                 
                 for language_code in languages:
                     language = Language.objects.get(code=language_code)
